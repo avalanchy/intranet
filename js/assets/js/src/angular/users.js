@@ -17,8 +17,8 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter) 
             this.years = [first].concat([second], _.range(START, END+1), [penult], [last]);
             this.chosen = first;
             this.last = last;
-            this.start = undefined;
-            this.end = undefined;
+            this.start = null;
+            this.end = null;
             this.set_range = function(start, end){
                 this.start = start;
                 this.end = end;
@@ -26,7 +26,7 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter) 
             this.select_year = function(){
                 switch (this.chosen){
                     case first:
-                        this.set_range(undefined, undefined);
+                        this.set_range(null, null);
                         break;
                     case second:
                         this.set_range(START-50, START-1);

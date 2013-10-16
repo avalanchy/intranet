@@ -210,6 +210,7 @@ class User(Base):
             'location': (self.location, location[0], location[1]),
             'start_work': self.start_work.isoformat() if self.start_work else None,
             'stop_work': self.stop_work.isoformat() if self.stop_work else None,
+            'date_of_birth': self.date_of_birth.isoformat() if self.date_of_birth else None,
             'groups': self.groups,
             'roles': self.roles,
             'avatar_url': '/api/images/users/%s' % self.id,
