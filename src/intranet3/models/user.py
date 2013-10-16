@@ -88,6 +88,7 @@ class User(Base):
     )
     stop_work = Column(Date, nullable=True, default=None)
     description = Column(String, nullable=True, default=None)
+    date_of_birth = Column(Date, nullable=True, default=None)
 
 
     presences = orm.relationship('PresenceEntry', backref='user', lazy='dynamic')
