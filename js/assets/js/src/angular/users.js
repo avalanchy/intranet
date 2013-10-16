@@ -181,6 +181,19 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter) 
         });
       }
 
+        var d_start = $scope.dob.start;
+        var d_end = $scope.dob.end;
+        if( d_start && d_end ){
+            filtered_users = _.filter(filtered_users, function(user){
+                var dob = user.date_of_birth;
+                if (dob){
+                    var year = dob.substring(0,4);
+                    dob = (year >= d_start) && (year <= d_end);
+                }
+                return dob;
+            });
+        }
+
       return filtered_users;
     };
 
