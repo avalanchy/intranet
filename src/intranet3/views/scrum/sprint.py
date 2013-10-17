@@ -335,8 +335,8 @@ class Add(BaseView):
 
 
 @view_config(route_name='scrum_sprint_delete',
-    renderer='intranet3:templates/common/delete.html',
-    permission='scrum')
+             renderer='intranet3:templates/common/delete.html',
+             permission='scrum')
 class Delete(BaseView):
 
     def dispatch(self):
@@ -362,7 +362,6 @@ class Team(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
         bugs = self._fetch_bugs(sprint)
         sw = SprintWrapper(sprint, bugs, self.request)
 
-
         return dict(
             sprint=sprint,
             info=sw.get_info(),
@@ -385,7 +384,6 @@ class ExtraTab(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
         )
         return dict(
             info=sw.get_info(),
-            extra_tab=extra_tab,
             sprint_tabs=tabs,
-
+            extra_tab=extra_tab,
         )
