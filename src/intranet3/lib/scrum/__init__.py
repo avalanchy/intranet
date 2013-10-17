@@ -155,8 +155,11 @@ class SprintWrapper(object):
         return entries, sum([e[1] for e in entries])
 
     def get_tabs(self):
-        tabs = self.session.query(Project).filter(Project.client_id == self.sprint.client_id).first().get_sprint_tabs
-        return tabs
+        extra_tabs = self.session.query(Project)\
+                         .filter(Project.client_id == self.sprint.client_id)\
+                         .first()\
+                         .get_sprint_tabs
+        return extra_tabs
 
     def get_board(self):
         todo = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0)

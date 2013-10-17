@@ -116,6 +116,7 @@ class Field(ClientProtectionMixin, BaseView):
 
 class BaseSprintView(BaseView):
     def tmpl_ctx(self):
+
         session = self.session
         sprint = self.v.get('sprint')
         if not sprint:
@@ -365,5 +366,26 @@ class Team(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
         return dict(
             sprint=sprint,
             info=sw.get_info(),
+
+        )
+
+@view_config(route_name='scrum_sprint_extra-tab', permission='client')
+class ExtraTab(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
+    def get(self):
+        sprint = self.v['sprint']
+        bugs = self._fetch_bugs(sprint)
+        sw = SprintWrapper(sprint, bugs, self.request)
+
+        tab_name = self.request.GET['tab_name']
+        tabs = sw.get_tabs()
+
+        extra_tab = dict(
+            name=tab_name,
+            link=dict(tabs)[tab_name]
+        )
+        return dict(
+            info=sw.get_info(),
+            extra_tab=extra_tab,
+            sprint_tabs=tabs,
 
         )
