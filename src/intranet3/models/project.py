@@ -1,3 +1,5 @@
+import re
+
 from pprint import pformat
 from sqlalchemy import Column, ForeignKey, orm
 from sqlalchemy.types import String, Integer, Boolean, Text
@@ -85,12 +87,7 @@ class Project(Base):
 
     @property
     def get_sprint_tabs(self):
-        tabs = []
-        for item in self.sprint_tabs.split('\n'):
-            tab_name, tab_link = item.strip().split(':')
-            tab = (tab_name, tab_link)
-            tabs.append(tab)
-        return tabs
+        return re.findall('(.+)\|(.+)(?:\n|$)', self.sprint_tabs)
 
     def format_selector(self):
         if self.turn_off_selectors:
