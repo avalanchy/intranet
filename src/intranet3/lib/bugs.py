@@ -159,7 +159,7 @@ class Bugs(object):
         fetchers = []
         for project, tracker, creds in entries:
             fetcher = get_fetcher(tracker, creds, tracker.logins_mapping)
-            fetcher.fetch_scrum(sprint.name, project.project_selector)
+            fetcher.fetch_scrum(sprint.name, project.project_selector, project.component_selector)
             fetchers.append(fetcher)
             if tracker.type in ('bugzilla', 'rockzilla', 'igozilla'):
                 break
@@ -241,7 +241,7 @@ class Bugs(object):
             """ % (condition, )
             query = DBSession.query('ticket_id', 'project_id', 'time').from_statement(sql).params(**params)
 
-            for bug in bugs.itervalues():
+            for bug in orig_bugs:
                 bug.sprint_time = 0.0
 
             for bug_id, project_id, time in query:

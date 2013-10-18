@@ -1,5 +1,13 @@
 (function($){
 
+    function set_lates_heigth() {
+        $('#latesTodayContentWrapper').css('max-height', $(window).height() - 100);
+    }
+
+    $(window).resize(function() {
+        set_lates_heigth();
+    })
+
     /**
      * Add method to format string
      */
@@ -137,6 +145,8 @@
 
     /* DOM ready */
     $(function(){
+        set_lates_heigth();
+
         $.tablesorter.addParser({
             // set a unique id
             id: 'priority',
@@ -349,6 +359,7 @@
                 });
             }
         });
+
         $(document).mousemove(function(e){
             usertooltip.pos(e.pageX,e.pageY);
         });
@@ -481,7 +492,7 @@
 
         /**
          * TYPEAHEAD FOR SELECTS
-         * 
+         *
          * Usage: just add typeAheadSelect class to your select control, and
          * let the magic happen!
          */
@@ -631,6 +642,8 @@
             $this.hide();
         });
     });
+
+
 })(jQuery);
 
 // IH - intranet helpers

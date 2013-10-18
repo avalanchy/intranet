@@ -11,6 +11,7 @@ from intranet3.lib.employee import user_leave
 from .times import EmployeeChoices
 from intranet3.models import ( DBSession, User, TimeEntry, PresenceEntry,
                                WrongTime, Late, WrongTime )
+from .utils import TimeField
 
 _ = TranslationStringFactory('intranet3')
 day_start = datetime.time(0, 0, 0)
@@ -49,18 +50,21 @@ class LateJustificationForm(BaseForm):
         if late:
             raise ValidationError(_(u'You already have justification in this date'))
 
-
-
 class LateApplicationForm(BaseForm):
+
+    late_start = TimeField(_(u'From'))
+    late_end = TimeField(_(u'To'))
+    work_from_home = wtf.BooleanField(_(u'Work From Home'))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(LateApplicationForm, self).__init__(*args, **kwargs)
 
-    def validate_popup_date(self, field):
-        if field.data <= datetime.date.today():
-            raise ValidationError(_(u'Date have to be form future'))
+    def validate_late_start(self, field):
+        if field.data >= self.late_end.data:
+            raise ValidationError(_(u'Invalid time range'))
 
+    def validate_popup_date(self, field):
         date = field.data
         user_id = self.user.id
         late = Late.query.filter(Late.date==date)\
@@ -68,6 +72,17 @@ class LateApplicationForm(BaseForm):
                          .filter(Late.deleted==False).first()
         if late:
             raise ValidationError(_(u'You already have application in this date'))
+
+        if date < datetime.date.today():
+            start_date = datetime.datetime.combine(date, day_start)
+            end_date = datetime.datetime.combine(date, day_end)
+            work_start = DBSession.query(func.min(PresenceEntry.ts)) \
+                .filter(PresenceEntry.user_id==self.user.id) \
+                .filter(PresenceEntry.ts>=start_date) \
+                .filter(PresenceEntry.ts<=end_date).one()[0]
+
+            if not work_start or work_start.time() < hour_9:
+                raise ValidationError(_(u'You don\'t have late on this date !'))
 
 class WrongTimeJustificationForm(BaseForm):
 
@@ -134,6 +149,8 @@ class AbsentApplicationForm(wtf.Form):
                 raise ValidationError(_(u'End < Start'))
 
     def validate_popup_type(self, field):
+        if field.data == u'l4' and not self.request.user.employment_contract:
+            raise ValidationError(_(u"Only user on employment contract can submit L4 absence."))
         if self.popup_date_start.data and self.popup_date_end.data and field.data not in (u'inne', u'okolicznosciowe', u'l4'):
             mandated, used, left = user_leave(self.request, self.popup_date_start.data.year)
             days = h.get_working_days(self.popup_date_start.data, self.popup_date_end.data)

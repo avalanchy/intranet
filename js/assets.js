@@ -6,21 +6,28 @@ var BOWER_JS = [
   BOWER_COMPONENTS + 'bootstrap/js/bootstrap-tooltip.js',
   BOWER_COMPONENTS + 'bootstrap/js/*.js',
   BOWER_COMPONENTS + 'angular/angular.js',
+  BOWER_COMPONENTS + 'angular-strap/dist/angular-strap.js',
   BOWER_COMPONENTS + 'angular-bootstrap/ui-bootstrap.min.js',
   BOWER_COMPONENTS + 'angular-bootstrap/ui-bootstrap-tpls.min.js',
   BOWER_COMPONENTS + 'datejs/build/date-en-US.js',
   BOWER_COMPONENTS + 'modernizr/modernizr.js',
   BOWER_COMPONENTS + 'underscore/underscore.js',
-  BOWER_COMPONENTS + 'spectrum/spectrum.js'
+  BOWER_COMPONENTS + 'spectrum/spectrum.js',
+  BOWER_COMPONENTS + 'bootstrap-select/bootstrap-select.js',
+  BOWER_COMPONENTS + 'bootstrap-timepicker/js/bootstrap-timepicker.min.js',
 ];
 
 var BOWER_CSS = [
   BOWER_COMPONENTS + 'jquery-ui/themes/smoothness/*.css',
   BOWER_COMPONENTS + 'spectrum/spectrum.css',
+  BOWER_COMPONENTS + 'bootstrap-select/bootstrap-select.css',
+  BOWER_COMPONENTS + 'bootstrap-datepicker/css/datepicker.css',
+  BOWER_COMPONENTS + 'bootstrap/bootstrap.css',
+  BOWER_COMPONENTS + 'bootstrap-timepicker/css/bootstrap-timepicker.min.css'
 ];
 
 var STATIC = '../src/intranet3/static/';
-var PARTIALS = 'tmp/partials_tmp.js';
+var PARTIALS_DEST = 'tmp/partials_tmp.js';
 var NGMINNED_APP = 'tmp/ngminned_app.js';
 
 module.exports = {
@@ -37,13 +44,15 @@ module.exports = {
   JQUERY_UI: BOWER_COMPONENTS + 'jquery-ui/themes/smoothness/images',
    // Our things
   APP_JS: [
+    'assets/js/src/angular/app.js',
     'assets/js/src/**/*.js',
-    PARTIALS
+    PARTIALS_DEST
   ],
   APP_LESS: [
     'assets/less/*.less'
   ],
   NGMINNED_APP: NGMINNED_APP,
-  PARTIALS: PARTIALS,
+  PARTIALS_DEST: PARTIALS_DEST,
+  PARTIALS_SRC: ['assets/partials/**/*.html'],
   STATIC: STATIC
 };

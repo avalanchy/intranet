@@ -68,6 +68,20 @@ class List(BaseView):
             )
         else:
             stats = None
+
+
+        all_sprints_for_velocity = self.session.query(
+            Sprint.project_id,
+            Sprint.worked_hours,
+            Sprint.bugs_worked_hours,
+            Sprint.achieved_points
+        ).all()
+
+        for sprint in sprints:
+            associated_sprints = [s for s in all_sprints_for_velocity
+                                 if s[0]==sprint.project_id]
+            sprint.calculate_velocities(associated_sprints)
+
         return dict(
             sprints=sprints,
             form=form,
@@ -123,6 +137,17 @@ class BaseSprintView(BaseView):
             sprint_id = self.request.GET.get('sprint_id')
             sprint = Sprint.query.get(sprint_id)
         project = Project.query.get(sprint.project_id)
+
+
+        sprints = self.session.query(
+            Sprint.project_id,
+            Sprint.worked_hours,
+            Sprint.bugs_worked_hours,
+            Sprint.achieved_points
+        ).filter(Sprint.project_id==sprint.project_id).all()
+
+        sprint.calculate_velocities(sprints)
+
         self.v['project'] = project
         self.v['sprint'] = sprint
 
@@ -155,8 +180,12 @@ class Show(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
             tracker=tracker,
             bugs=sw.bugs,
             info=sw.get_info(),
-            sprint_tabs=sw.get_tabs()
+            sprint_tabs=sw.get_tabs(),
+            str_date=self._sprint_daterange(sprint.start, sprint.end),
         )
+
+    def _sprint_daterange(self, st, end):
+        return '%s - %s' % (st.strftime('%d-%m-%Y'), end.strftime('%d-%m-%Y'))
 
 
 @view_config(route_name='scrum_sprint_board', permission='client')
@@ -243,7 +272,7 @@ class Charts(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
         burndown = sw.get_burndown_data()
         tracker = Tracker.query.get(sprint.project.tracker_id)
 
-        entries, sum_ = sw.get_worked_hours()
+        entries, sum_, bugs_sum = sw.get_worked_hours()
         entries.insert(0, ('Employee', 'Time'))
         piechart_data = json.dumps(entries)
 
@@ -355,7 +384,7 @@ class Delete(BaseView):
             form=form
         )
 
-@view_config(route_name='scrum_sprint_team', permission='scrum')
+@view_config(route_name='scrum_sprint_team', permission='client')
 class Team(ClientProtectionMixin, FetchBugsMixin, BaseSprintView):
     def get(self):
         sprint = self.v['sprint']

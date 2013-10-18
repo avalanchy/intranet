@@ -71,7 +71,7 @@ def do_dictsort(value, case_sensitive=False, by='key', attribute=None):
     return sorted(value.items(), key=sort_func)
 
 def tojson(dict_):
-    return json.dumps(dict_)
+    return Markup(json.dumps(dict_))
 
 
 def is_true(value):
@@ -94,8 +94,10 @@ def initials(name, letters=1):
             first = name[0][0].upper()
             last = name[-1][:letters].capitalize()
             return '%s.%s' % (first, last)
-        else:
+        elif len(name) == 1:
             return name[0][:letters+1].capitalize()
+        else:
+            return ''
 
 
 def int_or_float(value):

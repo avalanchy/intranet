@@ -68,8 +68,6 @@ def main(global_config, **settings):
         else:
             user = User.query.get(userid)
             perm = [ 'g:%s' % g for g in user.groups ]
-            if user.is_coordinator:
-                perm.append('g:coordinator')
             if user.freelancer:
                 perm.append('g:freelancer')
         return perm
@@ -103,6 +101,8 @@ def main(global_config, **settings):
     pyramid_config.add_route('api_users', '/api/users')
     pyramid_config.add_route('api_preview', '/api/preview')
     pyramid_config.add_route('api_images', '/api/images/{type:\w+}/{id:\d+}')
+    pyramid_config.add_route('api_presence', 'api/presence')
+    pyramid_config.add_route('api_blacklist', 'api/blacklist')
 
     pyramid_config.add_renderer('.html', 'pyramid_jinja2.renderer_factory')
     pyramid_config.add_renderer(None, 'intranet3.utils.renderer.renderer_factory')
@@ -167,7 +167,7 @@ def run():
     from intranet3 import cron
     if not config.get('CRON_DISABLE'):
         cron.run_cron_tasks()
-    
+
     for directory in ['users', 'teams', 'previews']:
         if not os.path.exists(os.path.join(settings['AVATAR_PATH'], directory)):
             os.makedirs(os.path.join(settings['AVATAR_PATH'], directory))

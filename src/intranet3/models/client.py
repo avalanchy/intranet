@@ -1,6 +1,7 @@
 from pyramid.decorator import reify
 from sqlalchemy import Column, ForeignKey, orm, distinct
 from sqlalchemy.types import String, Integer
+from sqlalchemy import event
 
 from intranet3.models import Base, User, DBSession, Project
 
@@ -15,7 +16,7 @@ class Client(Base):
     color = Column(String, nullable=False, default='')
     google_card = Column(String, nullable=True)
     google_wiki = Column(String, nullable=True)
-    selector    = Column(String, nullable=True) 
+    selector    = Column(String, nullable=True)
     street      = Column(String, nullable=True)
     city        = Column(String, nullable=True)
     postcode    = Column(String, nullable=True)
@@ -51,3 +52,8 @@ class Client(Base):
         return emails
 
 
+@event.listens_for(Client.coordinator_id, 'set')
+def after_set(target, value, oldvalue, initiator):
+    """ Used for coordinators managment, see Project model"""
+    if value != oldvalue:
+        target.old_coordinator = oldvalue

@@ -207,7 +207,6 @@ form ul {
     box-sizing: border-box;
     border-radius: 5px;
     margin-left: 148px;
-    overflow: auto;
 }
 #right_column_content:after {
     visibility: hidden;
@@ -438,8 +437,52 @@ form {
   .ajax-loader {
     margin: 6px 0 0 5px;
   }
+  .closed {
+    text-decoration: line-through;
+  }
 }
-/* Users tooltip */
+
+.users-tooltip-container {
+    width: 400px;
+    opacity: 1.0 !important;
+}
+
+#users-tooltip-angular {
+    overflow: hidden;
+    max-width: 400px;
+    margin:8px 0 0 8px;
+    padding:8px;
+    border-radius:5px;
+    box-shadow:0 0 8px #888;
+    background:#fff;
+    font-size: 11px;
+    color: black;
+    text-align: left;
+    img {
+        width:100px;
+        float:left;
+        margin:0 8px 8px 0;
+    }
+    h3 {
+        font-weight:bold;
+        font-size:16px;
+        margin:0 0 8px;
+    }
+    .form {
+        float:left;
+        width:250px;
+    }
+    .form-line {
+        clear:both;
+        label {
+            float:left;
+            display: block;
+            width:70px;
+            font-size: 11px;
+        }
+    }
+}
+
 #users-tootip {
     display:none;
     position:absolute;
@@ -514,29 +557,26 @@ table.bugs-list tbody tr.other-projects td {
         padding: 0 10px;
       }
   }
-/* Presence */
+
 .presence {
+    border: 0px;
     caption {
         margin-bottom: 1px;
     }
     td {
-        background: #fff;
+        border: 0px;
+        border-bottom: 1px solid #999 !important;
+    }
+    th {
+        background: #D8BDA8 !important;
     }
     .current_user td {
         border-bottom: 1px solid #EED3D7;
         background: #ddd;
         font-weight: bold;
     }
-    .late td {
-        background: #F55 !important;
-    }
-    .late-light td {
-        background: #FEE !important;
-    }
     .current_user.late {
         td {
-            border: 1px solid #B94A48;
-            border-right: none;
             &:last-child {
                 border-right: 1px solid #B94A48;
             }
@@ -554,11 +594,102 @@ table.bugs-list tbody tr.other-projects td {
             display: inline;
         }
     }
-    .current_user.late-light td {
-        background: #FEE;
+    .work-from-home-record:hover td {
+        background: #BAA175 !important;
     }
-    tr:hover td {
-        background: #ddd !important;
+    .work-from-home-record:nth-of-type(even) td {
+        background-color: #EBFFC2;
+    }
+    .work-from-home-record:nth-of-type(odd) td {
+        background-color: #F7FFE5;
+    }
+
+    .late-record:hover td {
+        background: #BAA175 !important;
+    }
+    .late-record:nth-of-type(even) td {
+        background-color: #FFFC9E;
+    }
+    .late-record:nth-of-type(odd) td {
+        background-color: #FFFED4;
+    }
+
+    .absence-record:hover td {
+        background: #C2C08C !important;
+    }
+    .absence-record:nth-of-type(even) td {
+        background-color: #FFF6E8;
+    }
+    .absence-record:nth-of-type(odd) td {
+        background-color: #FFE8C2;
+    }
+}
+
+#latesTodayWrapper {
+    color: #000;
+    position:fixed;
+    margin-top: 5%;
+    bottom: 2%;
+    right: 20px;
+    padding: 5px 15px 5px 5px;
+
+    thead {
+        position: fixed;
+    }
+    tbody {
+        padding-top: 20px;
+    }
+    .lates-column-close {
+        width: 15px;
+    }
+    .lates-column-user {
+        width: 130px;
+    }
+    .lates-column-from {
+        width: 25px;
+    }
+    .lates-column-to {
+        width: 25px;
+    }
+    .lates-column-header {
+        text-align: left;
+        padding: 2px;
+        padding-left: 10px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        background: #DDD;
+        border-top: 1px solid #AAA;
+    }
+    .lates-column-header-empty {
+        width: 240px;
+        text-align: center;
+        padding: 2px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        background: #DDD;
+        border-top: 1px solid #AAA;
+    }
+    .lates-column-header-date{
+        padding: 2px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        background: #DDD;
+        border-top: 1px solid #AAA;
+
+        div {
+            letter-spacing: 0px;
+        }
+    }
+    #latesTodayContentWrapper {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 250px;
+        margin-top: 24px;
+        margin-bottom: 5px;
+
+        .table {
+            margin-bottom: 0px;
+        }
     }
 }
 
@@ -1171,8 +1302,13 @@ form.box_edit_user dl dt {
     position: relative;
     top: -5px;
 }
+#task_board_container {
+    width: 100%;
+}
 .task_board {
+    width: auto;
     border-top: 1px solid #dbd4d4;
+    margin: 0px auto;
     thead td {
         font-weight: bold;
         padding: 5px;
@@ -1190,6 +1326,9 @@ form.box_edit_user dl dt {
     tbody td:first-child {
         text-align: left;
     }
+    .empty_column {
+        width: 100px;
+    }
     .head_card {
         font-size: 12px;
         border-top: 2px solid #dbd4d4;
@@ -1204,10 +1343,47 @@ form.box_edit_user dl dt {
             font-weight: bold;
         }
     }
+    .yellow_card_wrapper {
+        overflow: hidden;
+        width: 140px;
+        height: 80px;
+    }
+    .yellow_card_wrapper:hover {
+        overflow: visible;
+        .yellow_card {
+           background-color:#dacf91;
+           z-index: 100;
+        }
+        .blocked {
+            background-color:#a66464;
+        }
+    }
+    .yellow_card_outer_wrapper {
+        overflow: visible;
+        position: relative;
+        float: left;
+        margin: 5px 2px;
+        .points-outer {
+            display: block;
+        }
+        .points-inner {
+            display: none;
+        }
+    }
+    .yellow_card_outer_wrapper:hover {
+        z-index: 100;
+        .points-outer {
+            display: none;
+        }
+        .points-inner {
+            display: block;
+        }
+    }
     .yellow_card {
         background-color:#faefa1;
+        overflow: visible;
+        width: 100%;
         padding: 3px;
-        margin: 5px 0.5%;
         color:#000;
         font-size:13px;
         text-decoration:none;
@@ -1215,33 +1391,24 @@ form.box_edit_user dl dt {
         box-shadow:0 1px 1px rgba(0, 0, 0, 0.2);
         border-bottom:2px solid rgba(0, 0, 0, 0.2);
         cursor:pointer;
-        position: relative;
-        width: 49%;
         box-sizing:border-box;
         -moz-box-sizing:border-box;
         -webkit-box-sizing:border-box;
         text-align:left;
-        float: left;
-        min-width: 138px;
-        &:hover { 
-            .desc_ticket {
-                height: auto;
-            }
-        }
     }
     .yellow_card.blocked {
         background-color: #faa1a1;
     }
     .container_card_blocked {
+        width: 100%;
         position: relative;
         float: left;
-        min-width: 138px;
-        margin: 0 0.5%;
+        margin-right: 2px;
         .yellow_card {
             float: none;
             margin-top: -5px;
             border-top: 1px solid #a66464;
-            width: 100% !important;
+            margin-right: 0px;
         }
         .yellow_card:first-child {
             z-index: 10;
@@ -1269,7 +1436,7 @@ form.box_edit_user dl dt {
         margin-bottom: 2px;
     }
     .desc_ticket {
-        height: 56px;
+        // height: 56px;
         min-height: 56px;
         overflow: hidden;
         line-height: 14px;
@@ -1759,8 +1926,6 @@ i.pointer {
 .frame_team {
     .box {
         margin-right: 20px;
-        min-height: 570px;
-        max-height: 570px;
     }
     input {
         margin-bottom: 0;
@@ -1769,51 +1934,93 @@ i.pointer {
         margin: 0;
         padding: 0;
         list-style: none;
-        min-height: 460px;
-        max-height: 460px;
         overflow-y: auto;
     }
     .users {
         margin-left: -10px;
-    }
-    .scroll {
-        width: 103%;
+
+        .user-name-outer {
+            display: table;
+            position: absolute;
+            height: 40px;
+            width: 100%;
+            float: left;
+        }
+        .user-name-middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .user-name-inner {
+            margin-left: 50px;
+            margin-right: auto;
+            width: 10px;
+        }
+        .user-avatar {
+            float: left;
+        }
     }
     .scroll-user {
-        width: 470px;
+        // width: 470px;
         .users {
             width: 104%;
         }
     }
+    .add-on-icon {
+        float: left;
+        margin-left: 10px;
+    }
+    #add-on-input {
+        float: left;
+        margin-right: 10px;
+    }
 }
 .box-teams {
-    width: 360px;
+    overflow: hidden;
     > h2 {
         float: left;
     }
     > .btn {
-        float: right;
         margin-top: 10px;
-        margin-right: 18px;
+        margin-left: 18px;
     }
     .alert {
         background-color: #fff;
         border: 1px solid #ddd;
         color: #333;
+        width: 40px;
+        float: left;
     }
     .alert-success {
         background-color:#dff0d8;
         border-color:#d6e9c6;
         color:#468847;
     }
+    .icon-arrow-left {
+      float: right;
+      margin-top: 14px;
+      cursor: pointer;
+    }
 }
 .box-users {
-    width: 425px;
+    width: 360px;
+    margin-left: 10px;
+    float: right;
+    .users-hide {
+      cursor: pointer;
+      margin: 7px;
+      position: fixed;
+      right: 70px;
+    }
+    h2.title {
+      float: left
+    }
+    #add-on-input {
+        width: 120px;
+    }
 }
 .icon_team {
     float: left;
-    width: 98px;
-    margin-right: 5px;
+    width: 75px;
     text-align: center;
     img {
         display: block;
@@ -1824,10 +2031,7 @@ i.pointer {
     }
 }
 .desc_team {
-    float: left;
-    min-height: 126px;
     .thumbnail {
-        width: 220px;
         border: 2px dashed #ddd;
     }
     img {
@@ -1847,9 +2051,13 @@ i.pointer {
     font-size: 13px;
     font-weight: bold;
     padding-bottom: 15px;
+    i {
+      cursor: pointer;
+    }
 }
 .team-box {
     margin-bottom: 20px;
+    margin-right: -15px;
     img {
         width: 60px;
     }
@@ -1859,17 +2067,14 @@ i.pointer {
     li {
         border-bottom: 1px solid #ddd;
         margin-bottom: 10px;
+        margin-right: 10px;
         padding-bottom: 10px;
         overflow: hidden;
-        width: 342px;
         &:last-child {
             margin-bottom: 0;
             padding-bottom: 0;
             border: none;
         }
-    }
-    .btn-danger, .btn-success{
-        margin-top: 5px;
     }
     .alert {
         padding: 0;
@@ -1888,24 +2093,65 @@ i.pointer {
             right: 3px;
         }
     }
-}
-.users-input-search {
-    margin-top: 12px;
-    margin-bottom: 15px;
-    input {
-        width: 381px;
+    button.close {
+      display: none;
+    }
+    .show_x {
+      button.close {
+        display: block;
+      }
+    }
+    .team {
+      overflow: hidden;
+    }
+    .project-list {
+        float: left;
+        padding: 4px;
+        margin-right: 5px;
+        width: 185px;
+        margin-top: -4px;
+
+        .project-record {
+            border-bottom: 1px solid;
+            border-top: 1px solid;
+            border-color: #CCC;
+        }
+        .project-record:hover {
+            background: #EEE;
+        }
+        .project-name {
+            width: 120px;
+            overflow: hidden;
+            white-space: nowrap;
+            float: left;
+        }
+        .project-worked-hours {
+            font-weight: bold;
+            float: right;
+        }
     }
 }
-.teams-input-search {
-    margin-top: 5px;
+.teams-input-search, .users-input-search {
+    display: inline;
+    margin-left: 10px;
     input {
-        width: 281px;
+        width: 170px;
+        margin-top: 10px;
     }
+    span {
+      margin-top: 10px;
+    }
+}
+.team-less {
+  margin: -3px 0 0 20px;
+  input {
+    margin-top: -1px;
+  }
 }
 .users {
     margin-top: 10px;
     li {
-        width: 220px;
+        width: 160px;
         border: 1px solid #ddd;
         border-radius: 5px;
         margin-bottom: 10px;
@@ -1932,7 +2178,7 @@ i.pointer {
         img {
             margin: 0;
         }
-    }   
+    }
     .desc_team {
         .user:last-child {
             border: none;
@@ -1947,5 +2193,182 @@ i.pointer {
         .thumbnail {
             border: none;
         }
+    }
+}
+
+#employees {
+  table thead tr {
+    th:nth-child(1) {
+      width: 100px;
+    }
+    th:nth-child(2) {
+      width: 200px;
+    }
+    th:nth-child(3) {
+      width: 200px;
+    }
+    th:nth-child(4) {
+      width: 100px;
+    }
+    th:nth-child(5) {
+      width: 50px;
+    }
+    th:nth-child(6) {
+      width: 180px;
+    }
+  }
+  .below {
+    margin-top: 10px;
+
+  }
+}
+
+.dropdown-menu {
+  .check-mark {
+    margin-top: -1.5px !important;
+  }
+}
+
+#floatBar {
+    position: fixed;
+    bottom: 8px;
+    margin-top: 1%;
+    width: 270px;
+    height: 10px;
+    right: 15px;
+    color: #000;
+    text-align: center;
+    margin-right: 20px;
+
+    .badge {
+        float: right;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+}
+
+.overflow_visible {
+  overflow: visible;
+}
+
+.checkbox {
+  margin-top: 15px;
+  margin-right: 10px;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.invisibile {
+  visibility: hidden;
+}
+
+.markdown ul {
+   list-style-type: disc !important;
+   list-style-position: inside !important;
+}
+.markdown ol {
+   list-style-type: decimal !important;
+   list-style-position: inside !important;
+}
+.markdown ul ul, ol ul {
+   list-style-type: circle !important;
+   list-style-position: inside !important;
+   margin-left: 15px !important;
+}
+.markdown ol ol, ul ol {
+   list-style-type: lower-latin !important;
+   list-style-position: inside !important;
+   margin-left: 15px !important;
+}
+
+#black_list_header {
+  text-align: center;
+}
+
+.black_list_select select {
+  width: 240px;
+  min-height: 300px;
+  -webkit-appearance: none;
+}
+
+#black_list_controls {
+    float: left;
+    width: 30px;
+    margin-top: 110px;
+
+    input {
+        width: 30px;
+    }
+}
+
+.black_list_select {
+  padding: 5px 5px 5px 5px;
+  overflow-y: auto;
+  text-align: center;
+  float: left;
+}
+
+#new-lates-button {
+    float: right;
+    display: inline-table;
+
+    #work-from-home-quantity {
+        background-color: #ACC20D;
+    }
+    #lates-quantity {
+        background-color: #DDCB01;
+    }
+    #absences-quantity {
+        background-color: #EBAC3B;
+    }
+    #new-quantity {
+        background-color: red;
+        cursor: pointer;
+    }
+}
+
+#new-lates-button div {
+    float: left;
+    margin-top: -1px;
+    border-radius: 15px;
+    width: 15px;
+    padding: 2px;
+    color: white;
+    font-weight: bold;
+    cursor: default;
+}
+
+.new-late-label {
+    color: red;
+}
+
+.whats-this {
+    background: #DDD;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+
+#work_from_home {
+    margin-top: 19px;
+}
+
+.nav-tabs {
+  li a {
+    cursor: pointer;
+  }
+}
+
+.velocity-opened {
+    color: #BBB;
+}
+.bootstrap-timepicker {
+    width: 206px;
+    .input-small {
+        width: 178px;
     }
 }

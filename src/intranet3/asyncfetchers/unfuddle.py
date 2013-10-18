@@ -242,14 +242,19 @@ A comma or vertical bar separated list of report criteria composed as
         full_url = serialize_url(url, conditions_string=conditions_string)
         self.fetch(full_url)
 
-    def fetch_scrum(self, sprint_name, project_id=None):
+    def fetch_scrum(self, sprint_name, project_id=None, component_id=None):
         if not self.unfuddle_data:
             self.get_data(partial(self.fetch_scrum, sprint_name, project_id=project_id))
         else:
             projects_reversed = dict((v,k) for k, v in self.unfuddle_data['projects'].iteritems())
-            project_id = projects_reversed[project_id]
+            _project_id = projects_reversed.get(project_id)
+            if not _project_id:
+                error = 'Wrong project name %s' % project_id
+                flash('Could match project selector "%s" to Unfuddle project names' % project_id)
+                self.fail(error)
+                return
             url = self.api_url() + '?'
-            milestone_id = self.unfuddle_data['milestones'].get((str(project_id), sprint_name))
+            milestone_id = self.unfuddle_data['milestones'].get((str(_project_id), sprint_name))
             if not milestone_id:
                 flash('Wrong sprint name')
                 self.fail('Wrong sprint name')

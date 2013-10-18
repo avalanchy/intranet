@@ -17,6 +17,7 @@ class BugUglyAdapter(object):
 
     def __init__(self, bug):
         self._bug = bug
+        self._bug_tracker_type = bug.tracker.type # after saving to memcached
 
     def __getattr__(self, item):
         return getattr(self._bug, item)
@@ -25,6 +26,8 @@ class BugUglyAdapter(object):
 
         if self._bug.project.client_id == 20:
             return self._bug.get_status() == 'VERIFIED' and self._bug.get_resolution() == 'DEPLOYED'
+        elif self._bug_tracker_type == 'pivotaltracker':
+            return self._bug.status in ('delivered', 'accepted')
         else:
             return self._bug.get_status() == 'CLOSED' or self._bug.get_status() == 'VERIFIED'
 
@@ -34,10 +37,8 @@ class BugUglyAdapter(object):
 
     @property
     def velocity(self):
-        if self.is_closed():
-            points = float(self.whiteboard.get('p', 0.0))
-            return (points / self.sprint_time) if self.sprint_time else 0.0
-        return None
+        points = float(self.whiteboard.get('p', 0.0))
+        return (points / self.time * 8.0) if self.time else 0.0
 
     @classmethod
     def produce(cls, bugs):
@@ -143,16 +144,23 @@ class SprintWrapper(object):
         #
         #bug_ids_cond = or_(*[ and_(TimeEntry.project_id==p_id, TimeEntry.ticket_id==b_id)  for p_id, b_id in bugs_ids ])
 
-        entries = self.session.query(User, func.sum(TimeEntry.time))\
+        entries = self.session.query(User, func.sum(TimeEntry.time), TimeEntry.ticket_id)\
                               .filter(TimeEntry.user_id==User.id)\
                               .filter(TimeEntry.project_id==self.sprint.project_id) \
                               .filter(TimeEntry.added_ts>=self.sprint.start)\
                               .filter(TimeEntry.added_ts<=self.sprint.end)\
                               .filter(TimeEntry.deleted==False)\
-                              .group_by(User).all()
+                              .group_by(User, TimeEntry.ticket_id).all()
 
-        entries = sorted([ (user.name, round(time)) for user, time in entries ], key=lambda x: x[1], reverse=True)
-        return entries, sum([e[1] for e in entries])
+        entries = [ (user.name, round(time), ticket_id)
+                    for user, time, ticket_id in entries ]
+        entries = sorted(entries, key=lambda x: x[1], reverse=True)
+
+        return (
+            entries,
+            sum([e[1] for e in entries]),
+            sum([e[1] for e in entries if e[2] and not e[2].startswith('M')])
+        )
 
     def get_tabs(self):
         extra_tabs = self.session.query(Project)\
@@ -162,32 +170,33 @@ class SprintWrapper(object):
         return extra_tabs
 
     def get_board(self):
-        todo = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0)
-        inprocess = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0)
-        toverify = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0)
-        completed = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0)
+        todo = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0, empty=True)
+        inprocess = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0, empty=True)
+        toverify = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0, empty=True)
+        completed = dict(bugs=dict(blocked=[], with_points=[], without_points=[]), points=0, empty=True)
 
         def append_bug(d, bug):
             if bug.is_blocked:
-                d['blocked'].append(bug)
+                d['bugs']['blocked'].append(bug)
             elif bug.points:
-                d['with_points'].append(bug)
+                d['bugs']['with_points'].append(bug)
             else:
-                d['without_points'].append(bug)
+                d['bugs']['without_points'].append(bug)
+            d['empty'] = False;
 
         for bug in self.bugs:
             points = bug.points
             if bug.is_closed():
-                append_bug(completed['bugs'], bug)
+                append_bug(completed, bug)
                 completed['points'] += points
             elif bug.get_status() == 'RESOLVED':
-                append_bug(toverify['bugs'], bug)
+                append_bug(toverify, bug)
                 toverify['points'] += points
             elif not bug.is_unassigned():
-                append_bug(inprocess['bugs'], bug)
+                append_bug(inprocess, bug)
                 inprocess['points'] += points
             else:
-                append_bug(todo['bugs'], bug)
+                append_bug(todo, bug)
                 todo['points'] += points
 
         return dict(
@@ -199,20 +208,29 @@ class SprintWrapper(object):
         )
 
     def get_info(self):
-        entries, sum_worked_hours = self.get_worked_hours()
+        entries, sum_worked_hours, sum_bugs_worked_hours = self.get_worked_hours()
         points_achieved = self.get_points_achieved()
         points = self.get_points()
         total_hours = sum_worked_hours
+        total_bugs_hours = sum_bugs_worked_hours
 
+        users = []
+        if self.sprint.team_id:
+            users = self.session.query(User)\
+                        .filter(User.id.in_(self.sprint.team.users))\
+                        .filter(User.is_active==True)\
+                        .order_by(User.name).all()
         result = dict(
             start=self.sprint.start.strftime('%Y-%m-%d'),
             end=self.sprint.end.strftime('%Y-%m-%d'),
             days_remaining=h.get_working_days(datetime.date.today(), self.sprint.end),
             total_bugs = len(self.bugs),
+            users=users,
         )
         self.sprint.commited_points = points
         self.sprint.achieved_points = points_achieved
         self.sprint.worked_hours = total_hours
+        self.sprint.bugs_worked_hours = total_bugs_hours
         return result
 
 

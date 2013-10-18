@@ -8,16 +8,13 @@
             </ul>
         </div>
         <div id="user_edit_form">
-            <form class="user_profile box box_edit_user" method="post" accept-charset="utf-8">
+            <form class="user_profile box box_edit_user" action="{{ request.path_qs }}" method="post" accept-charset="utf-8">
                 {{ csrf_field }}
                 {% if request.has_perm('admin') %}
                     {{ form_field(form.is_active, _('Uncheck if no longer works here')) }}
                     {{ form_field(form.groups, _('Privilages for views, by default new employees get user and freelancers')) }}
                 {% endif %}
-                {{ form_field(form.is_programmer, _('Check if freelancer is a programmer')) }}
-                {{ form_field(form.is_frontend_developer, _('Check if freelancer is a frontend developer')) }}
-                {{ form_field(form.is_graphic_designer, _('Check if freelancer is a graphic designer')) }}
-                {{ form_field(form.level, 'Role') }}
+                {{ form_field(form.roles, 'Role') }}
 
                 {{ form_field(form.availability_link, _('Link to Google Calendar with working hours')) }}
                 {{ form_field(form.tasks_link, _('Link to Google calendar with booked tasks')) }}
@@ -47,6 +44,8 @@
                         </dl>
                     </div>
                     {% endwith %}
+                    {{ form_field(form.employment_contract, _('Employment contract')) }}
+                    {{ form_field(form.stop_work, _('Stop work'), class='datepicker') }}
                 {% endif %}
                 {{ form_field(form.description, _('Any additional description')) }}
                 {{ form.avatar }}
@@ -77,7 +76,7 @@
             $full_time_work = $('#start_full_time_work');
         var today = Date.today(), full_time_start_date = Date.parseExact($full_time_work.val(), 'dd/MM/yyyy');
 
-        if(today.compareTo(full_time_start_date) < 0){
+        if(full_time_start_date != null && today.compareTo(full_time_start_date) < 0){
             // not working full time
             $if_full_time_work.prop('checked', false);
             $full_time_work.css('visibility', 'hidden');

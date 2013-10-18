@@ -3,6 +3,47 @@ New release
 - default show active sprints only
 - project configuration allows to add custom tabs in sprint with embedded iframe
 
+0.9.5 (17-11-2013)
+===============
+- much better scrum board layout 
+- extra links to /times/tickets/report
+- better out of office form
+- angular sortby polish chart support
+- no team option for user list
+- note presence only for views, not api 
+- teams page visible for users
+- bug fixes
+
+0.9.4 (14-11-2013)
+===============
+- absence / lates enhancemets
+- more teams enhancemets
+- more users list enhancements
+- velocity per day
+- fixes for github fetcher
+- bugzilla sprint regex fix
+- user avatar edit fix
+- better project filter in client/project view
+
+0.9.3 (24-09-2013)
+===============
+- absence / lates support 
+- teams enhancemets
+- users list enhancements
+
+0.9.2 (24-09-2013)
+===============
+- show active sprints by default
+- illnes absence only avaliable for employment contract employee
+- avatar upload button fix
+- teams tab avaliable for client, add tooltip to user there
+- scrum user has ability to edit scrum fields in project
+- github support for scrum board
+
+0.9.1 (12-09-2013)
+===============
+- better scrum board column mapping for pivotaltracker
+
 0.9.0 (09-09-2013)
 ===============
 - support for multiproject sprints

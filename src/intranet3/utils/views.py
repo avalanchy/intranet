@@ -61,13 +61,6 @@ def _check_ip(remote_addr, office_ip):
 
 
 class BaseView(View):
-    def get_raw_template(self, path):
-        path = os.path.join(self.request.registry.settings['TEMPLATE_DIR'], path)
-        with open(path, 'r') as f:
-            template = f.read()
-            template = unicode(template, 'utf8')
-            return template
-
     def _note_presence(self):
         """
         Check if request IP equals database-stored office IP.
@@ -134,10 +127,16 @@ class ApiView(BaseView):
 
             return response
         request.add_response_callback(_response_exception)
-        
+
         super(ApiView, self).__init__(context, request)
 
         self.flash = lambda message, klass='': None # We don't need flash messages. So do nothing
+
+    def _note_presence(self):
+        """
+        No presence checking for calls to API
+        """
+        pass
 
     def dispatch(self):
         if self.request.method.lower() in self.http_method_names:

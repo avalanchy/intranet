@@ -74,8 +74,7 @@ class Edit(BaseView):
             user.location = form.location.data or None
             user.start_work = form.start_work.data or None
             user.description = form.description.data or None
-            if form.level.data:
-                user.levels = reduce(lambda x,y:x|y,[int(x) for x in form.level.data])
+            user.roles = form.roles.data
             if self.request.has_perm('admin'):
                 user.is_active = form.is_active.data
                 groups = form.groups.data
@@ -86,9 +85,9 @@ class Edit(BaseView):
                     user.freelancer = False
                 user.groups = groups
                 user.start_full_time_work = form.start_full_time_work.data or None
-            user.is_programmer = form.is_programmer.data
-            user.is_frontend_developer = form.is_frontend_developer.data
-            user.is_graphic_designer = form.is_graphic_designer.data
+                user.stop_work = form.stop_work.data or None
+            if self.request.has_perm('admin'):
+                user.employment_contract = form.employment_contract.data
 
 
             if form.avatar.data:

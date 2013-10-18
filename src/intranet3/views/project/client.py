@@ -120,6 +120,18 @@ class Sprints(BaseView):
         else:
             stats = None
 
+        all_sprints_for_velocity = self.session.query(
+            Sprint.project_id,
+            Sprint.worked_hours,
+            Sprint.bugs_worked_hours,
+            Sprint.achieved_points
+        ).all()
+
+        for sprint in sprints:
+            associated_sprints = [s for s in all_sprints_for_velocity
+                                 if s[0]==sprint.project_id]
+            sprint.calculate_velocities(associated_sprints)
+
         return dict(
             sprints=sprints,
             form=form,
@@ -175,7 +187,7 @@ class ProjectField(BaseView):
             raise HTTPNotFound
         md = markdown.Markdown()
         result = md.convert(result)
-        result = '<h2 class="content-header">%s</h2>%s' % (header, result)
+        result = '<h2 class="content-header">%s</h2><div class="markdown">%s</div>' % (header, result)
         return Response(result)
 
 

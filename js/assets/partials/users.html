@@ -1,0 +1,89 @@
+<div ng-controller="usersCtrl" id="employees">
+    <div class="row-fluid">
+        <form class="form-horizontal">
+             <div class="row">
+                 <input ng-model="search.name"  type="text" placeholder="Employee's name">
+                 <input type="text" ng-model="search.start_work" placeholder="Start work" date-range-picker>
+                 <input type="text" ng-model="search.stop_work" placeholder="Stop work" date-range-picker>
+                 <div class="description">
+                    Full time only: <input type="checkbox" ng-model="search.full_time_only">
+                 </div>
+             </div>
+             <div class="row below">
+               <select
+                   ng-model="search.groups" multiple title="Choose group"
+                   ng-options="group.id as group.name for group in groups"
+                   bs-select>
+               </select>
+                <select
+                     ng-model="search.roles" multiple title="Choose role"
+                     ng-options="role.id as role.name for role in roles"
+                     bs-select>
+                </select>
+                <select
+                     ng-model="search.locations" multiple title="Choose location"
+                     ng-options="c.id as c.name for c in locations"
+                     bs-select>
+                </select>
+                <select
+                     ng-model="search.teams" multiple title="Choose team"
+                     ng-options="team.id as team.name for team in teams"
+                     bs-select>
+                </select>
+             </div>
+        </form>
+    </div>
+    <div class="tabs">
+
+    <ul class="nav nav-tabs">
+       <li class="active"><a data-toggle="tab" ng-click="set_tab('employees')">Employees ({{ get_employees().length }})</a></li>
+        <li class=""><a data-toggle="tab" ng-click="set_tab('freelancers')">Freelancers ({{ get_freelancers().length }})</a></li>
+        <li class=""><a data-toggle="tab" ng-click="set_tab('clients')">Clients ({{ get_clients().length }})</a></li>
+        <li ng-show="G.user.has_perm('admin')" class=""><a data-toggle="tab" ng-click="set_tab('inactive')">Inactive ({{ get_inactive().length }})</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade in active">
+            <table id='oo' class="table table-bordered table-hover user-list width_auto">
+            <thead>
+                <th class="avatar">&nbsp;</th>
+                <th class="name" ng-click="predicate = 'name'; reverse=!reverse">Employee's name</th>
+                <th class="contact">Contact</th>
+                <th class="role">Role</th>
+                <th class="groups">Groups</th>
+                <th class="teams">Teams</th>
+                <th ng-click="predicate = 'start_work'; reverse=!reverse">Start work</th>
+                <th ng-click="predicate = 'stop_work'; reverse=!reverse">End work</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in get_users() | orderBy:predicate:reverse">
+                    <td class="email"><img src="{{user.avatar_url}}" alt="{{user.name}} [{{user.email}}]" /></td>
+                    <td class="name">
+                        <div><a ng-href="/user/view?user_id={{ user.id }}">{{user.name}}</a> ( {{user.location[2] }} )</div>
+                    </td>
+                    <td class="contact-info">
+                        <a href="mailto:{{ user.email }}">{{ user.email }}</a><br/><br/>
+                            <label ng-show="user.phone">Cellphone:<br/><span>{{ user.phone }}</span><br/></label>
+                            <label ng-show="user.phone_on_desk">Deskphone:<br/><span>{{ user.phone_on_desk }}</span><br/></label>
+                            <label ng-show="user.skype">Skype:<br/><span>{{ user.skype }}</span><br/></label>
+                            <label ng-show="user.irc">IRC:<br/><span>{{ user.irc }}</span><br/></label>
+                    </td>
+                    <td>
+                        <div ng-repeat="role in user.roles">{{ to_pretty_role(role) }}</div>
+                    </td>
+                  <td>
+                    <div ng-repeat="group in user.groups">{{ group }}</div>
+                  </td>
+                    <td>
+                        <div ng-repeat="team in user.teams">{{ team.name }}</div>
+                    </td>
+                    <td>{{user.start_work}}</td>
+                    <td>{{user.stop_work}}</td>
+                </tr>
+
+            </tbody>
+         </table>
+        </div>
+    </div>
+</div>
+</div>
