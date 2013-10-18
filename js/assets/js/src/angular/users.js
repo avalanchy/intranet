@@ -1,6 +1,6 @@
 var App = angular.module('intranet');
 
-App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter, services) {
+App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter, date_of_birth) {
 
     $scope.users = [];
     $scope.tab = 'employees';
@@ -44,7 +44,7 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter, 
       })[1];
     };
 
-    $scope.dob = services.date_of_birth(1980, 1990);
+    $scope.dob = date_of_birth.create(1980, 1995);
 
     $http.get('/api/users?full=1&inactive=1').success(function(data){
       $scope.users = data.users;
@@ -72,6 +72,7 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter, 
           $scope.search.teams = [];
         }, 0);
       });
+        date_of_birth.update_years_occurrences(data.users);
     });
 
 
