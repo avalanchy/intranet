@@ -72,7 +72,7 @@ App.controller('usersCtrl', function($scope, $http, $dialog, $timeout, $filter, 
           $scope.search.teams = [];
         }, 0);
       });
-        date_of_birth.update_years_occurrences(data.users);
+        $scope.dob.update_years($scope.users);
     });
 
 

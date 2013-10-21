@@ -7,8 +7,8 @@
                  <input type="text" ng-model="search.stop_work" placeholder="Stop work" date-range-picker>
                  <select class="input-medium" ng-model="dob.chosen" ng-options="year for year in dob.years" ng-change="dob.select_year()">
                  </select>
-                 <input class="input-mini" ng-show="dob.chosen==dob.last" ng-model="dob.start" type="number"/>
-                 <input class="input-mini" ng-show="dob.chosen==dob.last" ng-model="dob.end" type="number"/>
+                 <input class="input-mini" ng-show="dob.is_custom()" ng-model="dob.start" type="number"/>
+                 <input class="input-mini" ng-show="dob.is_custom()" ng-model="dob.end" type="number"/>
              </div>
              <div class="row below">
                <select
